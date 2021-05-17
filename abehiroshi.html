@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/sample.css">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ワイ「ゲッ、通信制限かかったもうた。阿部寛のホームページでも見るか……」</title>
+</head>
+
+<body>
+  <header>
+    <hr>
+    <p class="past">■ このスレッドは過去ログ倉庫に格納されています</p>
+    <hr>
+    <h1>ワイ「ゲッ、通信制限かかったもうた。阿部寛のホームページでも見るか……」</h1>
+  </header>
+  <!-- データ出力場所 -->
+  <ul id="output">
+
+
+  </ul>
+  <!-- 入力場所を作成しよう -->
+  <ul>
+    <li>
+      <label for="number">number</label>
+      <input type="text" id="number">
+    </li>
+    <li>
+      <label for="name">name</label>
+      <input type="text" id="name">
+    </li>
+    <li>
+      <textarea name="" id="text" cols="30" rows="10"></textarea>
+    </li>
+    <li>
+      <button id="send">send</button>
+    </li>
+  </ul>
+
+  <a class="otehon" href="http://tomcat.2ch.sc/test/read.cgi/livejupiter/1526621247/">お手本</a>
+
+  <span class="comment">
+
+    <div class="time_comment1"></div>
+    <div class="time_comment2"></div>
+    <div class="time_comment3"></div>
+    <div class="time_comment4"></div>
+
+  </span>
+
+  <!-- じぇくえり -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!-- でい -->
+
+
+
+  <!-- CDN example (unpkg) -->
+  <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+  <script>
+    dayjs().format()
+
+  </script>
+
+
+  <!-- CDN example (unpkg) -->
+  <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+  <script src="https://unpkg.com/dayjs@1.8.21/plugin/utc.js"></script>
+  <script>
+    dayjs.extend(window.dayjs_plugin_utc)
+    // var objectSupport = require("dayjs/plugin/objectSupport");
+    // dayjs.extend(objectSupport);
+
+    dayjs({
+      year: 2010,
+      month: 1,
+      day: 12
+    });
+    dayjs.utc({
+      year: 2010,
+      month: 1,
+      day: 12
+    });
+    dayjs().set({
+      year: 2010,
+      month: 1,
+      day: 12
+    })
+    dayjs().add({
+      M: 1
+    })
+    dayjs().subtract({
+      month: 1
+    })
+
+  </script>
+
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore().collection("chat13")
+
+
+
+  </script>
+
+
+  <script>
+    $("#send").on("click", function () { // 送信処理の記述
+      db.add({ // dbが送信先 送信データはオブジェクトの形
+        name: $('#name').val(), // inputの入力値
+        text: $('#text').val(), // textareaの入力値
+        number: $('#number').val(),
+        time: dayjs().format('YYYY/MM/DD HH:mm:ss dddd'), // 登録日時
+        time_cal: dayjs().unix()
+
+      });
+      // 送信後にtextareaを空にする処理
+      $('#text').val('');
+
+      number_next = Number($('#number').val()) + 1;
+      $('#number').val(number_next);
+      $('#text').focus();
+    });
+
+
+
+    // 受信処理
+    // 波カッコ内の処理はオンライン上のデータベースに変更があったときに実行される
+    db.orderBy('time', 'asc').onSnapshot(function (querySnapshot) {
+      // onSnapshotでcloud firestoreのデータ変更時に実行
+      // querySnapshot.docsにcloud firestoreのデータが配列形式で入る
+      const dataArray = []; // 必要なデータだけが入った新しい配列を作成
+      querySnapshot.docs.forEach(function (doc) {
+        const data = {
+          id: doc.id,
+          data: doc.data(),
+        }
+        dataArray.push(data);
+      });
+
+
+
+
+      // ...前ページの続き 「`」で囲んでタグ文字列を表現．「${}」で変数を埋め込み
+      const tagArray = []; // `dataArray`は前回出てきたオブジェクトの配列
+      dataArray.forEach(function (data) {
+        tagArray.push(`
+        <div class="label">
+           <p>
+          <span class="number">  ${data.data.number}:</span>
+        <span class="name">${data.data.name}</span>
+        <span>${data.data.time}</span>
+        <span>ID:${data.id}.net</span>
+           </p>
+        </div>
+        <p class="text">${data.data.text}</p>
+        `)
+      })
+      $('#output').html(tagArray);
+
+      console.log(dayjs(dataArray[0].data.time))
+
+      console.log(dayjs(dataArray))
+
+      console.log(dataArray[0].data.time_cal)
+      const time_start = dataArray[0].data.time_cal;
+      console.log(time_start)
+
+      let time_end = dataArray[dataArray.length - 1].data.time_cal;
+
+      console.log(time_end);
+
+      let time_all = time_end - time_start;
+      console.log(time_all)
+
+      time_base = (time_all / 10800).toFixed(2);
+      time_egg = (time_all / 600).toFixed(2)
+      time_cup = (time_all / 180).toFixed(2)
+
+
+      $('.time_comment1').html("<p id='time_comment1'>ここまで" + time_all + "秒です。</p>");
+      $('.time_comment2').html("<p id='time_comment2'>野球を" + time_base + "試合見られます。</p>");
+      $('.time_comment3').html("<p id='time_comment3'>ゆで卵を" + time_egg + "個つくれます。</p>");
+      $('.time_comment4').html("<p id='time_comment3'>カップラーメンを" + time_cup + "個つくれます。</p>");
+
+
+
+    });
+
+  </script>
+</body>
+
+</html>
